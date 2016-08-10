@@ -14,7 +14,7 @@
             and a final value total
         pass the number of items, the maximum weight, and all value weight (alternating) pairs
         to solve the problem using the data
-        (if there are no arguments, the program solves the problem with the default data
+        if there are no arguments, the program solves the problem with the default data
     
 */
 int main(int argc, char** argv)
