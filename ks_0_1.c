@@ -59,7 +59,7 @@ int main(int argc, char** argv)
             }
         }
 
-        //maximum weight
+        //check whether number of arguments is valid
         int vals_plus_wts_marker = 2*num_items + 3;
         if(argc != vals_plus_wts_marker)
         {
@@ -67,6 +67,7 @@ int main(int argc, char** argv)
             return -1;
         }
 
+        //maximum weight
         max_weight = strtol(argv[2], &end_ptr, 10);
         if(*end_ptr != 0 || errno != 0)
         {
