@@ -9,7 +9,9 @@
     main
         creates a default set of items (values and weights arrays)
         and finds the solution to the knapsack problem
-        applied to the items' values and weights
+        applied to the items' values and weights,
+        displays the solution as (chosen item index - chosen item value) pairs, one per line,
+        and a final value total
 */
 int main(int argc, char** argv)
 {
@@ -224,12 +226,13 @@ long* make_items_list(long num_items, long max_weight, long* weights, long** s_t
 
 /*
     display_items
-        displays the items and (optionally) their values chosen
-        in the solution to the knapsack problem
+        displays the items and (optionally) their values
+        that have been chosen in the solution to the knapsack problem
     param:
         long* items_list (the list of indices referring to each chosen item,
-                        index 0 stores the number of items chosen in the solution)
+                         index 0 stores the number of items chosen in the solution)
         long* values (the values associated with each item, 1-indexed)
+                     pass NULL if only item indices desired
     return:
         upon success returns 0 
         if nothing to print, returns -1
@@ -248,7 +251,7 @@ int display_items(long* items_list, long* values)
         
     puts("Items chosen:");
 
-    //display the item, value pairs
+    //display the item as (item index, item value) pairs, one per line
     if(values)
     {
         long total_value = 0;
@@ -257,6 +260,7 @@ int display_items(long* items_list, long* values)
             total_value += values[items_list[item]];
             printf("item %ld, val %ld\n", items_list[item], values[items_list[item]]);
         }
+        //display the total value of the solution
         printf("\ttotal value: %ld\n", total_value);
     }
     //display strictly the item numbers
@@ -273,7 +277,7 @@ int display_items(long* items_list, long* values)
 
 /*
     print_solutions_table
-        displays the knapsack 0/1 solutions table as a matrix
+        displays the knapsack 0/1 solutions table as a num_items*max_weight matrix
     param:
         int num_items (number of items considered)
         int max_weight (maximum weight considered)  
