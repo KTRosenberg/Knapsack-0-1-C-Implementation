@@ -200,7 +200,8 @@ long* make_items_list(long num_items, long max_weight, long* weights, long** s_t
     {
         //an item is part of the solution if it improves the total value of the
         //answer in the previous row (the maximum weight in the previous row
-        //is the same, but the current item was not considered for the solution) 
+        //is the same, but the current item was not considered for the solution
+        //in the previous row) 
         if(s_table[num_items][max_weight] != s_table[num_items-1][max_weight])
         {
             which_items[size_marker++] = num_items;
@@ -213,7 +214,6 @@ long* make_items_list(long num_items, long max_weight, long* weights, long** s_t
     which_items = realloc(which_items, (size_marker)*sizeof(long));
 
     return which_items;
-    
 }
 
 /*
