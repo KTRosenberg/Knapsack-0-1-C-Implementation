@@ -34,7 +34,7 @@ int main(int argc, char** argv)
     //and the remaining arguments as value_i_1 weight_i_1 value_i_2 weight_i_2 ...
     if(argc != 1)
     {
-        if(argc < 5)
+        if(argc < 3)
         {
             printf("%s\n", "Invalid number of arguments");
             return -1;
