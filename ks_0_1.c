@@ -153,12 +153,23 @@ int main(int argc, char** argv)
         num_items = 4;
         max_weight = 5;
         values = malloc((num_items + 1)*sizeof(long));
+        if(!values)
+        {
+            return -1;
+        }
         values[0] = -1;
         values[1] = 100;
         values[2] =  20;
         values[3] =  60;
         values[4] =  40;
+
         weights = malloc((num_items + 1)*sizeof(long));
+        if(!weights)
+        {
+            free(values);
+            values = NULL;
+            return -1;
+        }
         weights[0] = 0;
         weights[1] = 3;
         weights[2] = 2;
@@ -188,7 +199,14 @@ int main(int argc, char** argv)
     //calculate the solutions and store in the solutions table
     long** solutions = knapsack_0_1(num_items, max_weight, values, weights);
 
-    if(!solutions)return -1;
+    if(!solutions)
+    {
+        free(values);
+        values = NULL;
+        free(weights);
+        weights = NULL;
+        return -1;
+    }
     
     //display the solutions table
     print_solutions_table(num_items, max_weight, solutions);
