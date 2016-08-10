@@ -156,7 +156,7 @@ long** knapsack_0_1(long num_items, long max_weight, long* values, long* weights
             //otherwise, check whether it is better to add the new item or not
             else
             {
-                //alt_solution add the new item
+                //alt_solution, add the new item
                 alt_solution = values[itm] + s_table[itm-1][wt - weights[itm]];
                 //use the new item?
                 if(alt_solution > s_table[itm-1][wt])
