@@ -5,6 +5,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
 //#include <inttypes.h>
 
 long** knapsack_0_1(long num_items, long max_weight, long* values, long* weights);

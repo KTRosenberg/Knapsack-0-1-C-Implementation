@@ -8,10 +8,14 @@
 /*
     main
         creates a default set of items (values and weights arrays)
-        and finds the solution to the knapsack problem
-        applied to the items' values and weights,
-        displays the solution as (chosen item index - chosen item value) pairs, one per line,
-        and a final value total
+            and finds the solution to the knapsack problem
+            applied to the items' values and weights,
+            displays the solution as (chosen item index - chosen item value) pairs, one per line,
+            and a final value total
+        pass the number of items, the maximum weight, and all value weight (alternating) pairs
+        to solve the problem using the data
+        (if there are no arguments, the program solves the problem with the default data
+    
 */
 int main(int argc, char** argv)
 {
@@ -20,21 +24,133 @@ int main(int argc, char** argv)
     //initialize values and weights tables
     //the values and weights arrays are 1-indexed
     //for simpler indexing in the knapsack function
-    long num_items = 4;
-    long max_weight = 5;
-    long* values = malloc((num_items + 1)*sizeof(long));
-    values[0] = -1;
-    values[1] = 100;
-    values[2] =  20;
-    values[3] =  60;
-    values[4] =  40;
-    long* weights = malloc((num_items + 1)*sizeof(long));
-    weights[0] = 0;
-    weights[1] = 3;
-    weights[2] = 2;
-    weights[3] = 4;
-    weights[4] = 1;
+    long num_items = 0;
+    long max_weight = 0;
+    long* values = NULL;
+    long* weights = NULL;
+
+    //if valid (and valid number of) command line arguments passed
+    //main, interpret argument 1 as the number of items, argument 2 as the maximum weight,
+    //and the remaining arguments as value_i_1 weight_i_1 value_i_2 weight_i_2 ...
+    if(argc > 1)
+    {
+        //number of items
+        errno = 0;
+        char* end_ptr = NULL;
+        num_items  = strtol(argv[1], &end_ptr, 10);
+        if((end_ptr == argv[1] 
+            || num_items == LONG_MAX || num_items == LONG_MIN)
+            && errno == ERANGE)
+        {
+            perror(end_ptr);
+            return errno;
+        }
+
+        //maximum weight
+        end_ptr = NULL;
+        int vals_plus_wts_marker = 2*num_items + 3;
+        if(argc != vals_plus_wts_marker)return -1;
+
+        max_weight = strtol(argv[2], &end_ptr, 10);
+        if((end_ptr == argv[2] 
+            || max_weight == LONG_MAX || max_weight == LONG_MIN)
+            && errno == ERANGE)
+        {
+            perror(end_ptr);
+            return errno;
+        }
+
+        //allocate memory for values and weights arrays
+        values = malloc((num_items + 1)*sizeof(long));
+        if(!values)return -1;
+        weights = malloc((num_items + 1)*sizeof(long));
+        if(!weights)
+        {
+            free(values);
+            values = NULL;
+            return -1;
+        }
+        
+        long converted = 0;
+        long i = 3;
+        long offset = 2;
+        values[0] = -1;
+        weights[0] = 0;
+        //transfer command line arguments (val weight val weight...)
+        //to values and weights arrays
+        for(;i < vals_plus_wts_marker; i+= 2, ++offset)
+        {
+            end_ptr = NULL;
+            converted = strtol(argv[i], &end_ptr, 10);
+            if((end_ptr == argv[i] 
+                || converted == LONG_MAX || converted == LONG_MIN)
+                && errno == ERANGE)
+            {
+                perror(end_ptr);
+                free(values);
+                values = NULL;
+                free(weights);
+                weights = NULL;
+                return errno;
+            }
+            values[i - offset] = converted;
+            
+            end_ptr = NULL;
+            converted = strtol(argv[i + 1], &end_ptr, 10);
+            if((end_ptr == argv[i + 1] 
+                || converted == LONG_MAX || converted == LONG_MIN)
+                && errno == ERANGE)
+            {
+                perror(end_ptr);
+                free(values);
+                values = NULL;
+                free(weights);
+                weights = NULL;
+                return errno;
+            }
+            weights[i - offset] = converted;
+        }
+        end_ptr = NULL;
+    }
+    //else use the default input
+    else
+    {
+
+        num_items = 4;
+        max_weight = 5;
+        values = malloc((num_items + 1)*sizeof(long));
+        values[0] = -1;
+        values[1] = 100;
+        values[2] =  20;
+        values[3] =  60;
+        values[4] =  40;
+        weights = malloc((num_items + 1)*sizeof(long));
+        weights[0] = 0;
+        weights[1] = 3;
+        weights[2] = 2;
+        weights[3] = 4;
+        weights[4] = 1;
+    }
     
+    /*
+    printf("n_i: %ld \n m_w: %ld \n", num_items, max_weight);
+    long k = 0; 
+    printf("%c", '{');
+    for(; k < num_items; ++k)
+    {
+        printf("%ld, ", values[k]);
+    } 
+    printf("%ld}\n", weights[k]);
+
+    printf("%c", '{');
+    for(k = 0; k < num_items; ++k)
+    {
+        printf("%ld, ", weights[k]);
+    }
+    printf("%ld}\n", weights[k]);
+    */
+
+
     //calculate the solutions and store in the solutions table
     long** solutions = knapsack_0_1(num_items, max_weight, values, weights);
 
@@ -108,7 +224,7 @@ long** knapsack_0_1(long num_items, long max_weight, long* values, long* weights
         //allocate memory for the first row,
         //initialize its values to 0 (no items considered)
         long* weights_i = calloc((max_weight + 1), sizeof(long));
-        if(weights_i == NULL)
+        if(!weights_i)
         {
             free(s_table);
             return NULL;
@@ -126,7 +242,7 @@ long** knapsack_0_1(long num_items, long max_weight, long* values, long* weights
             
             //if memory allocation unsuccessful,
             //free all successfully allocated memory preceding the unsuccessful attempt
-            if(weights_i == NULL)
+            if(!weights_i)
             {
                 while(--itm >= 0)
                 {
@@ -219,6 +335,7 @@ long* make_items_list(long num_items, long max_weight, long* weights, long** s_t
     //index 0 of which_items stores the number of items
     which_items[0] = size_marker;
 
+    //minimize allocated memory for which_items 
     which_items = realloc(which_items, (size_marker)*sizeof(long));
 
     return which_items;
