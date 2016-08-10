@@ -7,8 +7,9 @@
 
 /*
     main
-    creates a default set of items (values and weights arrays)
-    and finds the solution to the knapsack problem applied to the items' values and weights
+        creates a default set of items (values and weights arrays)
+        and finds the solution to the knapsack problem
+        applied to the items' values and weights
 */
 int main(int argc, char** argv)
 {
@@ -40,12 +41,16 @@ int main(int argc, char** argv)
     //display the solutions table
     print_solutions_table(num_items, max_weight, solutions);
 
+    //return an array of indices (indices of the items chosen in the solution)
     long* items_list = make_items_list(num_items, max_weight, weights, solutions);
 
+    //if items_list is not created successfully, set an error value to return
+    //at the end of main
     if(!items_list)
     {
         ret_val = -1;
     }
+    //else display the chosen items as item index - item value pairs (one per line)
     else
     {
         display_items(items_list, values);
@@ -209,6 +214,7 @@ long* make_items_list(long num_items, long max_weight, long* weights, long** s_t
         }
         --num_items;
     }
+    //index 0 of which_items stores the number of items
     which_items[0] = size_marker;
 
     which_items = realloc(which_items, (size_marker)*sizeof(long));
