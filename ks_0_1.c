@@ -32,32 +32,54 @@ int main(int argc, char** argv)
     //if valid (and valid number of) command line arguments passed
     //main, interpret argument 1 as the number of items, argument 2 as the maximum weight,
     //and the remaining arguments as value_i_1 weight_i_1 value_i_2 weight_i_2 ...
-    if(argc > 1)
+    if(argc != 1)
     {
-        //number of items
-        errno = 0;
-        char* end_ptr = NULL;
-        num_items  = strtol(argv[1], &end_ptr, 10);
-        if((end_ptr == argv[1] 
-            || num_items == LONG_MAX || num_items == LONG_MIN)
-            && errno == ERANGE)
+        if(argc < 5)
         {
-            perror(end_ptr);
-            return errno;
+            printf("%s\n", "Invalid number of arguments");
+            return -1;
+        }
+
+        char* end_ptr = NULL;
+        errno = 0;
+
+        //number of items
+        num_items = strtol(argv[1], &end_ptr, 10);
+        if(*end_ptr != 0 || errno != 0)
+        {
+            if(errno != 0)
+            {
+                perror(end_ptr);
+                return errno;
+            }
+            else
+            {
+                printf("%s\n", "Invalid input");
+                return -1;
+            }
         }
 
         //maximum weight
-        end_ptr = NULL;
         int vals_plus_wts_marker = 2*num_items + 3;
-        if(argc != vals_plus_wts_marker)return -1;
+        if(argc != vals_plus_wts_marker)
+        {
+            printf("%s\n", "Invalid number of arguments");
+            return -1;
+        }
 
         max_weight = strtol(argv[2], &end_ptr, 10);
-        if((end_ptr == argv[2] 
-            || max_weight == LONG_MAX || max_weight == LONG_MIN)
-            && errno == ERANGE)
+        if(*end_ptr != 0 || errno != 0)
         {
-            perror(end_ptr);
-            return errno;
+            if(errno != 0)
+            {
+                perror(end_ptr);
+                return errno;
+            }
+            else
+            {
+                printf("%s\n", "Invalid input");
+                return -1;
+            }
         }
 
         //allocate memory for values and weights arrays
@@ -70,47 +92,58 @@ int main(int argc, char** argv)
             values = NULL;
             return -1;
         }
-        
+
         long converted = 0;
         long i = 3;
         long offset = 2;
         values[0] = -1;
         weights[0] = 0;
-        //transfer command line arguments (val weight val weight...)
+        //transfer remaining command line arguments (val weight val weight...)
         //to values and weights arrays
         for(;i < vals_plus_wts_marker; i+= 2, ++offset)
         {
-            end_ptr = NULL;
             converted = strtol(argv[i], &end_ptr, 10);
-            if((end_ptr == argv[i] 
-                || converted == LONG_MAX || converted == LONG_MIN)
-                && errno == ERANGE)
+            if(*end_ptr != 0 || errno != 0)
             {
-                perror(end_ptr);
                 free(values);
                 values = NULL;
                 free(weights);
                 weights = NULL;
-                return errno;
+
+                if(errno != 0)
+                {
+                    perror(end_ptr);
+                    return errno;
+                }
+                else
+                {
+                    printf("%s\n", "Invalid input");
+                    return -1;
+                }
             }
             values[i - offset] = converted;
             
-            end_ptr = NULL;
             converted = strtol(argv[i + 1], &end_ptr, 10);
-            if((end_ptr == argv[i + 1] 
-                || converted == LONG_MAX || converted == LONG_MIN)
-                && errno == ERANGE)
+            if(*end_ptr != 0 || errno != 0)
             {
-                perror(end_ptr);
                 free(values);
                 values = NULL;
                 free(weights);
                 weights = NULL;
-                return errno;
+
+                if(errno != 0)
+                {
+                    perror(end_ptr);
+                    return errno;
+                }
+                else
+                {
+                    printf("%s\n", "Invalid input");
+                    return -1;
+                }
             }
             weights[i - offset] = converted;
         }
-        end_ptr = NULL;
     }
     //else use the default input
     else
@@ -294,6 +327,7 @@ long** knapsack_0_1(long num_items, long max_weight, long* values, long* weights
             }
         }
     }
+
     return s_table;
 }
 

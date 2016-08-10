@@ -6,5 +6,3 @@ ver_2, user input implemented
 enter number_of_items max_wright value_1 weight_1 value_2 weight_2 ... value_k weight_k
 
 Run *make* or *make ks* to compile the main ks executable.
-
-NOTE: IN THE PROCESS OF REDOING/FIXING ERROR CHECKING
