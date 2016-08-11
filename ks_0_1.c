@@ -263,9 +263,9 @@ long** knapsack_0_1(long num_items, long max_weight, long* values, long* weights
 {
     if(num_items < 0 || max_weight < 0 || !values || !weights)return NULL;
     
-    //s_table for "solutions table,
+    //s_table for "solutions table,"
     //where dimension 1 is the number of items considered and
-    //dimension 2 is the max weight considered"
+    //dimension 2 is the max weight considered
     long** s_table = malloc((num_items + 1)*sizeof(long*));
     if(!s_table)return NULL;
 
